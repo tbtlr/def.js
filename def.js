@@ -71,8 +71,6 @@
             Klass._super = Superclass;
             Klass.prototype.constructor = Klass;
             Klass.extend(deferred._props);
-            
-            deferred._super = deferred._props = null;
             // return actual value
             return Klass.valueOf();
         };
