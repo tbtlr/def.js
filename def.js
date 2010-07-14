@@ -6,26 +6,27 @@
  */
 
 (function(global){
-    // used to defer setup of superclass and plugins
+    // used to defer setup of superclass and properties
     var deferred;
     
     function extend(source){
         var target = this.prototype;
         
         for(var key in source){
-            var existing = target[key], base = source[key];
+            var sup = target[key], sub = source[key];
             // check if we're overwriting an existing function
-            target[key] = typeof existing + typeof base == "functionfunction" ? (function(sup, sub){
+            target[key] = typeof sup + typeof sub == "functionfunction" ? (function(sup, sub){
                 return function(){
                     var self = this;
                     
-                    sub._super = function(){
+                    sub._super || (sub._super = function(){
+                        // call the same method but in the superclass
                         sup.apply(self, arguments);
-                    }
+                    });
                     
                     return sub.apply(this, arguments);
                 };
-            })(existing, base) : base;
+            })(sup, sub) : sub;
         }
         
         return this;
@@ -64,10 +65,11 @@
                 return Klass;
             }
             
+            // inherit from superclass
             Subclass.prototype = Superclass.prototype;
             Klass.prototype = new Subclass;
             
-            Klass.superclass = Superclass;
+            Klass._super = Superclass;
             Klass.prototype.constructor = Klass;
             Klass.extend(deferred._props);
             
@@ -80,6 +82,7 @@
         return deferred;
     }
     
+    // calls the same method as its caller but in the superclass
     function __super__(){
         var caller = __super__.caller;
         
