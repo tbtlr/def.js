@@ -24,7 +24,7 @@
                         sup.apply(self, arguments);
                     });
                     
-                    return sub.apply(this, arguments);
+                    return sub.apply(self, arguments);
                 };
             })(sup, sub) : sub;
         }
@@ -64,7 +64,6 @@
             if(!Superclass){
                 return Klass;
             }
-            
             // inherit from superclass
             Subclass.prototype = Superclass.prototype;
             Klass.prototype = new Subclass;
@@ -74,11 +73,10 @@
             Klass.extend(deferred._props);
             
             deferred._super = deferred._props = null;
-            
             // return actual value
-            return Klass.valueOf;
+            return Klass.valueOf();
         };
-
+        
         return deferred;
     }
     
