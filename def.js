@@ -9,14 +9,6 @@
     // used to defer setup of superclass and plugins
     var deferred;
     
-    __super__ = function(){
-        var caller = __super__.caller;
-        
-        if(caller !== caller._super){
-            return caller._super.apply(caller, arguments);
-        }
-    }
-    
     function extend(source){
         var target = this.prototype;
         
@@ -39,7 +31,7 @@
         return this;
     }
     
-    def = function(context, klassName){
+    function def(context, klassName){
         klassName || (klassName = context, context = global);
         // create class on given context (defaults to global object)
         var Klass = context[klassName] = function Klass(){
@@ -88,6 +80,15 @@
         return deferred;
     }
     
+    function __super__(){
+        var caller = __super__.caller;
+        
+        if(caller !== caller._super){
+            return caller._super.apply(caller, arguments);
+        }
+    }
+    
     // expose
     global.def = def;
+    global.__super__ = __super__;
 }(this));
