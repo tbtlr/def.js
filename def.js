@@ -10,26 +10,28 @@
     var deferred;
     
     function extend(source){
-        var target = this.prototype;
+        var prop, target = this.prototype;
         
         for(var key in source){
-            var sup = target[key], sub = source[key];
-            // check if we're overwriting an existing function
-            target[key] = typeof sup + typeof sub == "functionfunction" ? (function(sup, sub){
-                return function(){
-                    var self = this;
-                    
-                    sub._super || (sub._super = function(){
-                        // call the same method but in the superclass
-                        sup.apply(self, arguments);
-                    });
-                    
-                    return sub.apply(self, arguments);
-                };
-            })(sup, sub) : sub;
+            if(source.hasOwnProperty(key)){
+                prop = target[key] = source[key];
+                // check if we're overwriting an existing function
+                if ("function" == typeof prop){
+                    // mark eatch method with its name and surrounding class
+                    prop._name = key;
+                 	prop._class = this;
+                }
+            }
         }
         
         return this;
+    }
+    
+    // based on http://github.com/shergin/legacy by shergin
+    function base() {
+        var caller = base.caller;
+        // call same method as its caller but in the superclass
+        return caller._class._super.prototype[caller._name].apply(this, arguments);	
     }
     
     function def(context, klassName){
@@ -46,10 +48,10 @@
             deferred._props = arguments[0] || { };
         }
         
-        // add static helper method
+        // make this class extendable
         Klass.extend = extend;
         
-        // called as function when not, inheriting from a superclass
+        // called as function to set properties - when not, inheriting from a superclass
         deferred = function(props){
             return Klass.extend(props);
         };
@@ -66,10 +68,15 @@
             }
             // inherit from superclass
             Subclass.prototype = Superclass.prototype;
-            Klass.prototype = new Subclass;
-            
+            var proto = Klass.prototype = new Subclass;
+            // reference base and superclass
+            Klass._class = Klass;
             Klass._super = Superclass;
-            Klass.prototype.constructor = Klass;
+            // enforce the constructor to be what we expect
+            proto.constructor = Klass;
+            // to call original methods in the superclass
+            proto._super = base;
+            
             Klass.extend(deferred._props);
             // return actual value
             return Klass.valueOf();
@@ -78,16 +85,6 @@
         return deferred;
     }
     
-    // calls the same method as its caller but in the superclass
-    function __super__(){
-        var caller = __super__.caller;
-        
-        if(caller !== caller._super){
-            return caller._super.apply(caller, arguments);
-        }
-    }
-    
-    // expose
+    // expose def to the gloabl context
     global.def = def;
-    global.__super__ = __super__;
 }(this));
