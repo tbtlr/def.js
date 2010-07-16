@@ -27,10 +27,11 @@
         return this;
     }
     
+    // calls same method as its caller but in the superclass
     // based on http://github.com/shergin/legacy by shergin
     function base() {
-        var caller = base.caller;
-        // call same method as its caller but in the superclass
+        // cross browser support > strict mode compatibility
+        var caller = arguments.callee.caller;
         return caller._class._super.prototype[caller._name].apply(this, arguments);	
     }
     
@@ -38,9 +39,9 @@
         klassName || (klassName = context, context = global);
         // create class on given context (defaults to global object)
         var Klass = context[klassName] = function Klass(){
-            // called as a constructor
-            if(this != context){
-                // allow the constructor to return a different class/object
+            if(this.constructor === Klass){
+                // called as a constructor
+                // allow init to return a different class/object
                 return this.init && this.init.apply(this, arguments);
             }
             // called as a function - defer setup of superclass and properties
@@ -85,6 +86,6 @@
         return deferred;
     }
     
-    // expose def to the gloabl context
+    // expose def to the global object
     global.def = def;
 }(this));
