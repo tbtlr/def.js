@@ -12,15 +12,13 @@
     function extend(source){
         var prop, target = this.prototype;
         
-        for(var key in source){
-            if(source.hasOwnProperty(key)){
-                prop = target[key] = source[key];
-                // check if we're overwriting an existing function
-                if ("function" == typeof prop){
-                    // mark eatch method with its name and surrounding class
-                    prop._name = key;
-                 	prop._class = this;
-                }
+        for(var key in source) if(source.hasOwnProperty(key)){
+            prop = target[key] = source[key];
+            // check if we're overwriting an existing function
+            if ("function" == typeof prop){
+                // mark eatch method with its name and surrounding class
+                prop._name = key;
+                prop._class = this;
             }
         }
         
@@ -39,7 +37,7 @@
         klassName || (klassName = context, context = global);
         // create class on given context (defaults to global object)
         var Klass = context[klassName] = function Klass(){
-            if(this.constructor === Klass){
+            if(context != this){
                 // called as a constructor
                 // allow init to return a different class/object
                 return this.init && this.init.apply(this, arguments);
@@ -52,7 +50,7 @@
         // make this class extendable
         Klass.extend = extend;
         
-        // called as function to set properties - when not, inheriting from a superclass
+        // called as function to set properties
         deferred = function(props){
             return Klass.extend(props);
         };
