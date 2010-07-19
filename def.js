@@ -30,7 +30,9 @@
     function base() {
         // cross browser support > strict mode compatibility
         var caller = arguments.callee.caller;
-        return caller._class._super.prototype[caller._name].apply(this, arguments);	
+        // arguments automatically passed to super if none provided
+        return caller._class._super.prototype[caller._name]
+          .apply(this, arguments.length ? arguments : caller.arguments);
     }
     
     function def(context, klassName){
@@ -77,8 +79,6 @@
             proto._super = base;
             
             Klass.extend(deferred._props);
-            // return actual value
-            return Klass.valueOf();
         };
         
         return deferred;
