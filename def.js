@@ -73,6 +73,10 @@
             // reference base and superclass
             Klass._class = Klass;
             Klass._super = Superclass;
+            
+            Klass.toString = function(){
+              return klassName;  
+            };
             // enforce the constructor to be what we expect
             proto.constructor = Klass;
             // to call original methods in the superclass
