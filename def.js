@@ -15,8 +15,8 @@
         for(var key in source) if(source.hasOwnProperty(key)){
             prop = target[key] = source[key];
             // check if we're overwriting an existing function
-            if ("function" == typeof prop){
-                // mark eatch method with its name and surrounding class
+            if('function' == typeof prop){
+                // mark each method with its name and surrounding class
                 prop._name = key;
                 prop._class = this;
             }
@@ -27,12 +27,12 @@
     
     // calls same method as its caller but in the superclass
     // based on http://github.com/shergin/legacy by shergin
-    function base() {
+    function base(){
         // cross browser support > strict mode compatibility
         var caller = arguments.callee.caller;
         // arguments automatically passed to super if none provided
         return caller._class._super.prototype[caller._name]
-          .apply(this, arguments.length ? arguments : caller.arguments);
+            .apply(this, arguments.length ? arguments : caller.arguments);
     }
     
     function def(context, klassName){
@@ -58,7 +58,7 @@
         };
         
         // dummy subclass
-        function Subclass() { }
+        function Subclass(){ }
         
         // valueOf is called to setup inheritance from a superclass
         deferred.valueOf = function(){
@@ -81,8 +81,8 @@
             proto.constructor = Klass;
             // to call original methods in the superclass
             proto._super = base;
-            
-            Klass.extend(deferred._props);
+            // set properties
+            deferred(deferred._props);
         };
         
         return deferred;
