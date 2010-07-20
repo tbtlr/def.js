@@ -3,6 +3,11 @@
  *
  *    Copyright (c) 2010 Tobias Schneider
  *    This script is freely distributable under the terms of the MIT license.
+ *
+ *    Featuring contributions by
+ *    John-David Dalton
+ *    Dmitry A. Soshnikov
+ *    Devon Govett
  */
 
 (function(global){
@@ -26,7 +31,7 @@
     }
     
     // calls same method as its caller but in the superclass
-    // based on http://github.com/shergin/legacy by shergin
+    // based on http://github.com/shergin/legacy by Valentin Shergin
     function base(){
         // cross browser support > strict mode compatibility
         var caller = arguments.callee.caller;
